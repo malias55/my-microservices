@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { compressPdf } = require('../lib/ghostscript');
+const { compressPdf } = require('./ghostscript');
 
 const router = Router();
 
