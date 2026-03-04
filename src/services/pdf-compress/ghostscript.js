@@ -6,7 +6,12 @@ const crypto = require('crypto');
 
 const execFileAsync = promisify(execFile);
 
-async function compressPdf(base64Input, quality) {
+const COLOR_ARGS = {
+  grayscale: ['-sColorConversionStrategy=Gray', '-dProcessColorModel=/DeviceGray'],
+  bw: ['-sColorConversionStrategy=Gray', '-dProcessColorModel=/DeviceGray', '-dMonoImageResolution=300', '-dConvertCMYKImagesToRGB=true'],
+};
+
+async function compressPdf(base64Input, quality, colorMode) {
   const id = crypto.randomUUID();
   const inputPath = path.join('/tmp', `${id}-input.pdf`);
   const outputPath = path.join('/tmp', `${id}-output.pdf`);
@@ -25,6 +30,7 @@ async function compressPdf(base64Input, quality) {
       `-dPDFSETTINGS=/${quality}`,
       '-dEmbedAllFonts=true',
       '-dSubsetFonts=true',
+      ...(colorMode && COLOR_ARGS[colorMode] || []),
       `-sOutputFile=${outputPath}`,
       inputPath
     ], { timeout: 60000 });

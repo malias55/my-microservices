@@ -10,9 +10,11 @@ function qualityToPreset(quality) {
   return 'prepress';
 }
 
+const VALID_COLORS = ['grayscale', 'bw'];
+
 router.post('/compress', async (req, res, next) => {
   try {
-    const { file, quality = 50 } = req.body;
+    const { file, quality = 50, colorMode = null } = req.body;
 
     if (!file) {
       return res.status(400).json({ error: 'Missing "file" field (base64 PDF)' });
@@ -23,7 +25,13 @@ router.post('/compress', async (req, res, next) => {
       return res.status(400).json({ error: 'quality must be an integer between 1 and 100' });
     }
 
-    const compressed = await compressPdf(file, qualityToPreset(q));
+    if (colorMode !== null && !VALID_COLORS.includes(colorMode)) {
+      return res.status(400).json({
+        error: `Invalid colorMode. Must be null, "grayscale", or "bw"`
+      });
+    }
+
+    const compressed = await compressPdf(file, qualityToPreset(q), colorMode);
 
     res.json({ file: compressed });
   } catch (err) {
