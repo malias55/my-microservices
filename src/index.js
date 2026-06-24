@@ -14,6 +14,7 @@ app.use(auth);
 
 // --- Services ---
 app.use('/pdf', require('./services/pdf-compress'));
+app.use('/pdf', require('./services/pdf-to-jpg'));
 // app.use('/image', require('./services/image-resize'));
 // app.use('/doc', require('./services/doc-convert'));
 
